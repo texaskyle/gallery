@@ -1,4 +1,8 @@
 <?php
+session_start();
+include_once 'imageUpload.dbh.php';
+$id = $_SESSION['id'];
+
 // check if the upload button has been clicked
 if(isset($_POST['uploadFile'])) {
     // taking the file details of the file that we about to upload
@@ -26,9 +30,12 @@ if(isset($_POST['uploadFile'])) {
             if ($filesize < 5000000) {
                 // giving the file a new name so that we can make it unique 
                 // true here is the microseconds when the file was being uploaded
-                $newFilename = uniqid('', true) . "." . $fileActualExtension;
+                $newFilename = "profile".$id."." . $fileActualExtension;
                 // destination of the file
                 $newfileDestnation = 'uploads/'.$newFilename;
+                // running an sql to update the database that we have just uploaded a profie image
+                $sql = "UPDATE profileimg SET status=0 WHERE userid='$id'";
+                $result = mysqli_query($conn, $sql);
 
                 // moving the uploaded file with the below function
                 move_uploaded_file($fileTmpname, $newfileDestnation);

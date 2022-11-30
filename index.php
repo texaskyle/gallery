@@ -1,6 +1,7 @@
 <?php
 session_start();
 include_once 'imageUpload.dbh.php';
+$sessionid = $_SESSION['id'];
 ?>
 
 <!DOCTYPE html>
@@ -10,7 +11,8 @@ include_once 'imageUpload.dbh.php';
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>index page</title>
+    <link rel="stylesheet" href="main.css">
 </head>
 
 <body>
@@ -33,14 +35,20 @@ include_once 'imageUpload.dbh.php';
 
             if ($resultsProfileImage) {
                 while ($rowImg = mysqli_fetch_assoc($resultsProfileImage)) {
-                    echo "<div>";
+                    echo "<div class = 'user-container'>";
                     if ($rowImg['status'] == 0) {
-                        echo "<img src='uploads/profile.'$id'.jfif' alt='this is the profile picture that you uploaded'>";
+                        // echo "<img src='uploads/profile.'$id'.jfif' alt='this is the profile picture that you uploaded'>";
+                        $filename = "uploads/profile".$sessionid."*";
+                        $fileInfo = glob($filename);
+                        $fileExt = explode(".", $fileInfo[0]);
+                        $fileActualExt = $fileExt[1];
+                         echo "<img src='uploads/profile".$id.".".$fileActualExt."?".mt_rand()."'>"; //alt='this is the profile picture that you uploaded'>";
                     } else {
                         echo "<img src='uploads/profileDefault.jfif' alt='this is the default profile picture'>";
                     }
+                    echo "<p>".$row['username']. "</p>";
                     echo "</div>";
-                    echo $row['username']; echo"<br>";
+                    
                 }
             }else{
                 echo "cannot find an id or userid in the profile image table";
@@ -60,6 +68,10 @@ include_once 'imageUpload.dbh.php';
         <input type='file' name='file'>
         <br><br>
         <button type='submit' name='uploadFile'>Upload</button>
+    </form>";
+        echo "<form action='deleteProfile.php' method='POST'>
+        <br><br>
+        <button type='submit' name='delete'>Delete profile pic</button>
     </form>";
     } else {
         echo "you are not looged in!";
